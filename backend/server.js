@@ -4,7 +4,7 @@ const PORT=process.env.PORT | 3000;
 const bodyParser = require('body-parser');
 
 const userRoute = require("./routes/userRoute");
-const {error404Controller,error500Controller} =require("./controllers/errorController");
+const {errorController} =require("./controllers/errorController");
 
 // parse url query string
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -18,8 +18,7 @@ app.get('/',(req,res)=>{
 
 app.use('/user', userRoute);
 
-app.use(error404Controller);
-app.use(error500Controller);
+app.use(errorController);
 
 app.listen(PORT,()=>{
     console.log(`Server started.${PORT}`);
