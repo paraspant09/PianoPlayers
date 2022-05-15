@@ -5,9 +5,7 @@ router.get('/', UserController.getAllUsersController);
 
 router.get('/:id', UserController.getUserByIDController);
 
-router.post('/',UserController.addNewUserController);
-
-router.put('/:id',UserController.updateUserDataController);
+router.put('/',UserController.updateUserDataController);
 
 router.delete('/:id',UserController.deleteUserController); 
 

@@ -1,9 +1,6 @@
-const errorController=(error, req, res,next)=>{
-    // console.log(res,req);
+const errorController=(error, _ , res,next)=>{
     res.status(error.statusCode).json({
-        error:{
-            message: error,
-        },
+        message:"An unexpected error occured.",
     });
 }
 
