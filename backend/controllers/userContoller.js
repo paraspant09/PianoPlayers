@@ -4,42 +4,22 @@ const Joi = require("joi");
 const {CountryCodeRegEx,CountryCodeRegExErrorMessage}=require('../constants/CountryCodeRegEx');
 
 const UserController={
-    getAllUsersController:async (req,res,next)=>{
+    getUserDataController:async (req,res,next)=>{
         try {
-            const {DBdata,DBerror}=await User.getAllUsers();
-            if(!DBerror)  res.status(200).json(DBdata);
-            else    res.status(200).json({error:DBerror});
-        } catch (error) {
-            if(!error.statusCode){
-                error.statusCode=500;
-            }
-            next(error);
-        }
-    },
-    getUserByIDController:async (req,res,next)=>{
-        try {
-            const schema=Joi.object({
-                user_id:Joi.number().min(1).required()
-            });
-            const {value:requestData,error}=schema.validate({user_id:req.params.id});
-            if(!error){
-                const {DBdata,DBerror}=await User.getUserByID(requestData.user_id);
+            if(req.session.userId){
+                const {DBdata,DBerror}=await User.getUserByID(req.session.userId);
                 if(!DBerror)  res.status(200).json(DBdata);
-                else    res.status(200).json({error:DBerror});
+                else    throw {message:DBerror , statusCode:200};
             }
-            else    res.status(200).json({message:error.message});
+            else    throw {message:"Your login data not found." , statusCode:200};
 
         } catch (error) {
-            if(!error.statusCode){
-                error.statusCode=500;
-            }
             next(error);
         }
     },
     updateUserDataController:async (req,res,next)=>{
         try {
             const schema=Joi.object({
-                user_id:Joi.number().min(1).required(),
                 fname:Joi.string().alphanum().min(3).max(100),
                 lname:Joi.string().alphanum().min(3).max(100),
                 email:Joi.string().max(50).email(),
@@ -50,15 +30,10 @@ const UserController={
             });
             const {value:requestData,error}=schema.validate(req.body);
             if(!error){
-                const {DBdata,DBerror}=await User.getUserByID(requestData.user_id);
-                if(DBerror){
-                    res.status(200).json({error:DBerror});
-                    return;
-                }
-                if(DBdata.length==0){
-                    res.status(200).json({error:`User Id ${requestData.user_id} do not exist in database.`});
-                    return;
-                }
+                const {DBdata,DBerror}=await User.getUserByID(req.session.userId);
+                if(DBerror)     throw {message:DBerror , statusCode:200};
+
+                if(DBdata.length==0)    throw {message:`User Id ${req.session.userId} do not exist in database.` , statusCode:200};
                 
                 let isAnyChange=false;
                 for (let [key, value] of Object.entries(requestData)) {
@@ -69,14 +44,8 @@ const UserController={
                         }    
                         else if(key==="email"){
                             const {DBdata:emailData,DBerror}=await User.getUserByEmail(value);
-                            if(DBerror){
-                                res.status(200).json({error:DBerror});
-                                return;
-                            }
-                            if(emailData.length!=0){
-                                res.status(200).json({error:"Email ID Already Exists."});
-                                return;
-                            }
+                            if(DBerror)     throw {message:DBerror , statusCode:200};
+                            if(emailData.length!=0)     throw {message:"Email ID Already Exists." , statusCode:200};
                             DBdata[0][key]=value;
                         }
                         else    DBdata[0][key]=value;
@@ -85,38 +54,30 @@ const UserController={
                 }
                 if(isAnyChange){
                     const {DBdata:updatedData,DBerror}=await User.updateUserData(DBdata[0]);
-                    if(DBerror)
-                        res.status(200).json({error:DBerror});
-                    else    res.status(200).json(updatedData);
+                    if(DBerror)     throw {message:DBerror , statusCode:200};
+                    res.status(200).json(updatedData);
                 }
-                else
-                    res.status(200).json({message:"No appropriate data is given to update."});
+                else    throw {message:"No appropriate data is given to update." , statusCode:200};
             }
-            else    res.status(200).json({message:error.message});
-
+            else    throw {message:error.message , statusCode:200};
         } catch (error) {
-            if(!error.statusCode){
-                error.statusCode=500;
-            }
             next(error);
         }
     },
     deleteUserController:async (req,res,next)=>{
         try {
-            const schema=Joi.object({
-                user_id:Joi.number().min(1).required()
-            });
-            const {value:requestData,error}=schema.validate({user_id:req.params.id});
-            if(!error){
-                const {DBdata,DBerror}=await User.deleteUser(requestData.user_id);
-                if(!DBerror)  res.status(200).json(DBdata);
-                else    res.status(200).json({error:DBerror});
+            if(req.session.userId){
+                const {DBdata,DBerror}=await User.deleteUser(req.session.userId);
+                req.session.destroy(err => {
+                    if(!err){
+                        res.clearCookie(process.env.SESSION_NAME);
+                    }
+                    if(!DBerror)  res.status(200).json(DBdata);
+                    else    throw {message:DBerror , statusCode:200};
+                });
             }
-            else    res.status(200).json({message:error.message});
+            else    throw {message:"Your login data not found." , statusCode:200};
         } catch (error) {
-            if(!error.statusCode){
-                error.statusCode=500;
-            }
             next(error);
         }
     }

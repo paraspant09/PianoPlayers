@@ -1,12 +1,11 @@
 const router = require("express").Router();
+const { checkAuthorization } = require("../controllers/authController");
 const UserController = require("../controllers/userContoller");
 
-router.get('/', UserController.getAllUsersController);
+router.get('/',checkAuthorization, UserController.getUserDataController);
 
-router.get('/:id', UserController.getUserByIDController);
+router.put('/',checkAuthorization,UserController.updateUserDataController);
 
-router.put('/',UserController.updateUserDataController);
-
-router.delete('/:id',UserController.deleteUserController); 
+router.delete('/',checkAuthorization,UserController.deleteUserController); 
 
 module.exports = router;

@@ -16,16 +16,12 @@ const SearchController={
                 if(nameLength==1 || nameLength==2){
                     const {DBdata,DBerror}=await User.getAllUsersByName(nameBreak,nameLength);
                     if(!DBerror)  res.status(200).json(DBdata);
-                    else    res.status(200).json({error:DBerror});
+                    else    throw {message:DBerror , statusCode:200};
                 }
-                else
-                    res.status(200).json({message:"Inappropriate Search Query."});
+                else    throw {message:"Inappropriate Search Query." , statusCode:200};
             }
-            else    res.status(200).json({message:error.message});
+            else    throw {message:error.message , statusCode:200};
         } catch (error) {
-            if(!error.statusCode){
-                error.statusCode=500;
-            }
             next(error);
         }
     }

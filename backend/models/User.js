@@ -42,10 +42,10 @@ const User={
     async getAllUsersByName(nameBreak,nameLength){
         try {
             if(nameLength==1){
-                const [rows] = await db.query("SELECT `user_id`,`fname`,`lname`,`bio` FROM user WHERE (`fname` LIKE CONCAT( '%',?,'%') or `lname` LIKE CONCAT( '%',?,'%'));",[nameBreak[0],nameBreak[0]]);
+                const [rows] = await db.query("SELECT `user_id`,`fname`,`lname`,`bio`,`popularity` FROM user WHERE (`fname` LIKE CONCAT( '%',?,'%') or `lname` LIKE CONCAT( '%',?,'%'));",[nameBreak[0],nameBreak[0]]);
                 return { DBdata:rows };
             }
-            const [rows] = await db.query("SELECT `user_id`,`fname`,`lname`,`bio` FROM user WHERE (`fname` = ? and `lname` LIKE CONCAT( '%',?,'%'));",[nameBreak[0],nameBreak[1]]);
+            const [rows] = await db.query("SELECT `user_id`,`fname`,`lname`,`bio`,`popularity` FROM user WHERE (`fname` = ? and `lname` LIKE CONCAT( '%',?,'%'));",[nameBreak[0],nameBreak[1]]);
             return { DBdata:rows };
         } catch (error) {
             console.error(error.sqlMessage);
