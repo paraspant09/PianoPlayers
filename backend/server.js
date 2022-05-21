@@ -10,6 +10,7 @@ const {sessionConnection} = require('./configure/sessionConnection');
 const authRoute = require("./routes/authRoute");
 const userRoute = require("./routes/userRoute");
 const searchRoute = require("./routes/searchRoute");
+const detailsRoute = require('./routes/detailsRoute');
 const {errorController} =require("./controllers/errorController");
 
 //cookie parser(fill up req(Request) object with all the browser cookies)
@@ -36,6 +37,8 @@ app.use('/auth', authRoute);
 app.use('/user', userRoute);
 
 app.use('/search', searchRoute);
+
+app.use('/details', detailsRoute);
 
 app.use(errorController);
 

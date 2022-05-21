@@ -14,16 +14,20 @@ const User={
     },
     async getAllUsers(){
         try {
-            const [rows] = await db.query("SELECT * FROM user;");
+            const [rows] = await db.query("SELECT * FROM `piano`.`user`;");
             return { DBdata:rows };
         } catch (error) {
             console.error(error.sqlMessage);
             return { DBerror: "Database Error Occured." };
         }
     },
-    async getUserByID(user_id){
+    async getUserByID(user_id,publicOnly){
         try {
-            const [rows] = await db.query("SELECT * FROM user WHERE (`user_id` = ?);",[user_id]);
+            if(publicOnly){
+                const [rows] = await db.query("SELECT `user_id`,`fname`,`lname`,`bio`,`popularity`,`country_code`,`gender` FROM `piano`.`user` WHERE (`user_id` = ?);",[user_id]);
+                return { DBdata:rows };
+            }
+            const [rows] = await db.query("SELECT * FROM `piano`.`user` WHERE (`user_id` = ?);",[user_id]);
             return { DBdata:rows };
         } catch (error) {
             console.error(error.sqlMessage);
@@ -32,7 +36,7 @@ const User={
     },
     async getUserByEmail(email){
         try {
-            const [rows] = await db.query("SELECT * FROM user WHERE (`email` = ?);",[email]);
+            const [rows] = await db.query("SELECT * FROM `piano`.`user` WHERE (`email` = ?);",[email]);
             return { DBdata:rows };
         } catch (error) {
             console.error(error.sqlMessage);
@@ -42,10 +46,10 @@ const User={
     async getAllUsersByName(nameBreak,nameLength){
         try {
             if(nameLength==1){
-                const [rows] = await db.query("SELECT `user_id`,`fname`,`lname`,`bio`,`popularity` FROM user WHERE (`fname` LIKE CONCAT( '%',?,'%') or `lname` LIKE CONCAT( '%',?,'%'));",[nameBreak[0],nameBreak[0]]);
+                const [rows] = await db.query("SELECT `user_id`,`fname`,`lname`,`bio`,`popularity`,`country_code`,`gender` FROM `piano`.`user` WHERE (`fname` LIKE CONCAT( '%',?,'%') or `lname` LIKE CONCAT( '%',?,'%'));",[nameBreak[0],nameBreak[0]]);
                 return { DBdata:rows };
             }
-            const [rows] = await db.query("SELECT `user_id`,`fname`,`lname`,`bio`,`popularity` FROM user WHERE (`fname` = ? and `lname` LIKE CONCAT( '%',?,'%'));",[nameBreak[0],nameBreak[1]]);
+            const [rows] = await db.query("SELECT `user_id`,`fname`,`lname`,`bio`,`popularity`,`country_code`,`gender` FROM `piano`.`user` WHERE (`fname` = ? and `lname` LIKE CONCAT( '%',?,'%'));",[nameBreak[0],nameBreak[1]]);
             return { DBdata:rows };
         } catch (error) {
             console.error(error.sqlMessage);
