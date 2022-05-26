@@ -33,7 +33,7 @@ const Playlist={
     },
     async getPlaylistsByName(playlist_name){
         try {
-            const [rows] = await db.query("SELECT * FROM `piano`.`playlist` WHERE (`playlist_name` LIKE CONCAT( '%',?,'%'));",[playlist_name]);
+            const [rows] = await db.query("SELECT * FROM `piano`.`playlist` WHERE (`playlist_name` LIKE CONCAT( '%',?,'%')) ORDER BY `popularity` DESC;",[playlist_name]);
             return { DBdata:rows };
         } catch (error) {
             console.error(error.sqlMessage);
@@ -42,7 +42,7 @@ const Playlist={
     },
     async getPlaylistsByUserID(user_id){
         try {
-            const [rows] = await db.query("SELECT * FROM `piano`.`playlist` WHERE (`user_id` = ?);",[user_id]);
+            const [rows] = await db.query("SELECT * FROM `piano`.`playlist` WHERE (`user_id` = ?) ORDER BY `popularity` DESC;",[user_id]);
             return { DBdata:rows };
         } catch (error) {
             console.error(error.sqlMessage);

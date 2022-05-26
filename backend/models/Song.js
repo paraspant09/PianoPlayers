@@ -3,7 +3,6 @@ const Joi=require("joi");
 
 const Song={
     //:TODO song field regular expression for checking valid song format or else error occur while song playing
-    //:TODO also regular expression for song name field
     schema: {
         song_name:Joi.string().regex(/^([a-zA-Z]+\s?)+$/).trim().min(3).max(50).required().messages({
             "string.pattern.base": "{{#label}} must be words with space between.!!",
@@ -20,8 +19,12 @@ const Song={
             return { DBerror: "Database Error Occured." };
         }
     },
-    async getSongBySongID(song_id){
+    async getSongBySongID(song_id,publicOnly){
         try {
+            if(publicOnly){
+                const [rows] = await db.query("SELECT * FROM `piano`.`song` WHERE (`song_id` = ? and status = 'PUB');",[song_id]);
+                return { DBdata:rows };
+            }
             const [rows] = await db.query("SELECT * FROM `piano`.`song` WHERE (`song_id` = ?);",[song_id]);
             return { DBdata:rows };
         } catch (error) {
@@ -32,10 +35,10 @@ const Song={
     async getSongsByName(song_name,publicOnly){
         try {
             if(publicOnly){
-                const [rows] = await db.query("SELECT * FROM `piano`.`song` WHERE (`song_name` LIKE CONCAT( '%',?,'%') and status = 'PUB');",[song_name]);
+                const [rows] = await db.query("SELECT * FROM `piano`.`song` WHERE (`song_name` LIKE CONCAT( '%',?,'%') and status = 'PUB') ORDER BY `popularity` DESC;",[song_name]);
                 return { DBdata:rows };
             }
-            const [rows] = await db.query("SELECT * FROM `piano`.`song` WHERE (`song_name` LIKE CONCAT( '%',?,'%'));",[song_name]);
+            const [rows] = await db.query("SELECT * FROM `piano`.`song` WHERE (`song_name` LIKE CONCAT( '%',?,'%')) ORDER BY `popularity` DESC;",[song_name]);
             return { DBdata:rows };
         } catch (error) {
             console.error(error.sqlMessage);
@@ -45,10 +48,10 @@ const Song={
     async getSongsByUserID(user_id,publicOnly){
         try {
             if(publicOnly){
-                const [rows] = await db.query("SELECT * FROM `piano`.`song` WHERE (`user_id` = ? and status = 'PUB');",[user_id]);
+                const [rows] = await db.query("SELECT * FROM `piano`.`song` WHERE (`user_id` = ? and status = 'PUB') ORDER BY `popularity` DESC;",[user_id]);
                 return { DBdata:rows };
             }
-            const [rows] = await db.query("SELECT * FROM `piano`.`song` WHERE (`user_id` = ?);",[user_id]);
+            const [rows] = await db.query("SELECT * FROM `piano`.`song` WHERE (`user_id` = ?) ORDER BY `popularity` DESC;",[user_id]);
             return { DBdata:rows };
         } catch (error) {
             console.error(error.sqlMessage);

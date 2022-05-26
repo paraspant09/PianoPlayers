@@ -8,7 +8,7 @@ const Contains={
     },
     async getAllSongsOfAPlaylist(playlist_id){
         try {
-            const [rows] = await db.query("SELECT * FROM `piano`.`contains` WHERE (`playlist_id` = ?);",[playlist_id]);
+            const [rows] = await db.query("SELECT * FROM `piano`.`contains` as c join `piano`.`song` as s ON s.`song_id`=c.`song_id` WHERE (`playlist_id` = ? and `status`='PUB') ORDER BY `popularity` DESC;",[playlist_id]);
             return { DBdata:rows };
         } catch (error) {
             console.error(error.sqlMessage);
@@ -17,7 +17,7 @@ const Contains={
     },
     async getAllPlaylistsContainingASong(song_id){
         try {
-            const [rows] = await db.query("SELECT * FROM `piano`.`contains` WHERE (`song_id` = ?);",[song_id]);
+            const [rows] = await db.query("SELECT * FROM `piano`.`contains` as c join `piano`.`playlist` as p ON p.`playlist_id`=c.`playlist_id` WHERE (`song_id` = ?) ORDER BY `popularity` DESC;",[song_id]);
             return { DBdata:rows };
         } catch (error) {
             console.error(error.sqlMessage);

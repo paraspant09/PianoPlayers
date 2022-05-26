@@ -42,6 +42,12 @@ app.use('/details', detailsRoute);
 
 app.use(errorController);
 
+app.use('*',(_,res)=>{
+    res.json({
+        message:"No routes matched."
+    })
+})
+
 app.listen(PORT,()=>{
     console.log(`Server started.${PORT}`);
 })

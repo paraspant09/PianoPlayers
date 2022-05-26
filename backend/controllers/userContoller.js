@@ -137,7 +137,7 @@ const UserController={
                 });
                 const {value:requestData,error}=schema.validate(req.body);
                 if(!error){
-                    const {DBdata,DBerror}=await Song.getSongBySongID(requestData.song_id);
+                    const {DBdata,DBerror}=await Song.getSongBySongID(requestData.song_id,false);
                     if(DBerror)     throw {message:DBerror , statusCode:200};
     
                     if(DBdata.length==0)    throw {message:"This Song do not exist in database." , statusCode:200};
@@ -172,7 +172,7 @@ const UserController={
                 });
                 const {value:requestData,error}=schema.validate(req.body);
                 if(!error){
-                    const {DBdata:songData,DBerror:songError}=await Song.getSongBySongID(requestData.song_id);
+                    const {DBdata:songData,DBerror:songError}=await Song.getSongBySongID(requestData.song_id,false);
                     if(songError)     throw {message:songError , statusCode:200};
     
                     if(songData.length==0)    throw {message:"This Song do not exist in database." , statusCode:200};
@@ -404,10 +404,12 @@ const UserController={
                 const schema=Joi.object(LikesSong.schema);
                 const {value:requestData,error}=schema.validate(req.body);
                 if(!error){
-                    const {DBdata:songExistData,DBerror:songExistError}=await Song.getSongBySongID(requestData.song_id);
+                    const {DBdata:songExistData,DBerror:songExistError}=await Song.getSongBySongID(requestData.song_id,false);
                     if(songExistError)     throw {message:songExistError , statusCode:200};
     
                     if(songExistData.length==0)    throw {message:`Song by this songid do not exist in database.` , statusCode:200};
+
+                    if(songExistData[0].status==="PRI")    throw {message:`You cannot like a private song.` , statusCode:200};
 
                     const {DBdata:likesASongData,DBerror:likesASongError}=await LikesSong.checkAUserLikesThisSong({
                         user_id:req.session.userId,
@@ -437,7 +439,7 @@ const UserController={
                 const schema=Joi.object(LikesSong.schema);
                 const {value:requestData,error}=schema.validate(req.body);
                 if(!error){
-                    const {DBdata:songExistData,DBerror:songExistError}=await Song.getSongBySongID(requestData.song_id);
+                    const {DBdata:songExistData,DBerror:songExistError}=await Song.getSongBySongID(requestData.song_id,false);
                     if(songExistError)     throw {message:songExistError , statusCode:200};
     
                     if(songExistData.length==0)    throw {message:`Song by this songid do not exist in database.` , statusCode:200};
@@ -562,7 +564,7 @@ const UserController={
     
                     if(playlistExistData.length==0)    throw {message:`Playlist by this playlistid do not exist in database.` , statusCode:200};
 
-                    const {DBdata:songExistData,DBerror:songExistError}=await Song.getSongBySongID(requestData.song_id);
+                    const {DBdata:songExistData,DBerror:songExistError}=await Song.getSongBySongID(requestData.song_id,false);
                     if(songExistError)     throw {message:songExistError , statusCode:200};
     
                     if(songExistData.length==0)    throw {message:`Song by this songid do not exist in database.` , statusCode:200};
