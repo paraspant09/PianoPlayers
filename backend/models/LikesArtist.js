@@ -39,7 +39,7 @@ const LikesArtist={
 
             const updatePopularity="UPDATE `piano`.`user` SET `popularity` = `popularity`+ 1 WHERE (`user_id` = ?);";
             const [_] = await db.query(updatePopularity,[artist_id]);
-            return { DBdata:rows };
+            return { DBdata:{ message:rows.affectedRows>0 ? "Liked Successfully." : "Like Unsuccessful."} };
         } catch (error) {
             console.error(error.sqlMessage);
             return { DBerror:"Database Error Occured." };
@@ -52,7 +52,7 @@ const LikesArtist={
 
             const updatePopularity="UPDATE `piano`.`user` SET `popularity` = `popularity`- 1 WHERE (`user_id` = ?);";
             const [_] = await db.query(updatePopularity,[artist_id]);
-            return { DBdata:rows };
+            return { DBdata:{ message:rows.affectedRows>0 ? "Removed Like Successfully." : "Like Removal Unsuccessful."} };
         } catch (error) {
             console.error(error.sqlMessage);
             return { DBerror: "Database Error Occured." };

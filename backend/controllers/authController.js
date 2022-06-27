@@ -28,7 +28,7 @@ const AuthController={
                     if(DBerror)     throw {message:DBerror , statusCode:200};
 
                     req.session.userId = insertRes.insertId;
-                    res.status(200).json({message:`${requestData.fname},your login is succesful.`});
+                    res.status(200).json({message:`${requestData.fname},your login is successful.`});
                 }
                 else    throw {message:"Email ID already existed." , statusCode:200};
             }
@@ -54,7 +54,7 @@ const AuthController={
                     const passwordMatch=await bcrypt.compare(requestData.password, DBdata[0].password);
                     if(passwordMatch){
                         req.session.userId = DBdata[0].user_id;
-                        res.status(200).json({message:`${DBdata[0].fname},your login is succesful.`});
+                        res.status(200).json({message:`${DBdata[0].fname},your login is successful.`});
                     }
                     else    throw {message:"Email/password does not exist." , statusCode:200};
                 }

@@ -12,6 +12,10 @@ const userRoute = require("./routes/userRoute");
 const searchRoute = require("./routes/searchRoute");
 const detailsRoute = require('./routes/detailsRoute');
 const {errorController} =require("./controllers/errorController");
+const cors = require('./configure/corsSetup');
+
+//Handling CORS
+app.use(cors);
 
 //cookie parser(fill up req(Request) object with all the browser cookies)
 app.use(cookieParser());

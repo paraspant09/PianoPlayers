@@ -27,10 +27,10 @@ const UserController={
         try {
             const schema=Joi.object({
                 fname:Joi.string().alphanum().min(3).max(100),
-                lname:Joi.string().alphanum().min(3).max(100),
+                lname:Joi.string().alphanum().min(3).max(100).allow(null),
                 email:Joi.string().max(50).email(),
                 password:Joi.string().min(8).max(255),
-                bio:Joi.string().trim().min(10).max(230),
+                bio:Joi.string().trim().min(10).max(230).allow(null),
                 country_code:Joi.string().min(3).max(3).pattern(new RegExp(CountryCodeRegEx)).messages(CountryCodeRegExErrorMessage),
                 gender:Joi.string().valid('M','F','O')
             });
@@ -115,7 +115,7 @@ const UserController={
                     });
                     if(DBerror)     throw {message:DBerror , statusCode:200};
     
-                    res.status(200).json({message:insertRes});
+                    res.status(200).json(insertRes);
                 }
                 else    throw {message:error.message , statusCode:200};
             }
@@ -219,7 +219,7 @@ const UserController={
                     });
                     if(DBerror)     throw {message:DBerror , statusCode:200};
     
-                    res.status(200).json({message:insertRes});
+                    res.status(200).json(insertRes);
                 }
                 else    throw {message:error.message , statusCode:200};
             }
@@ -340,7 +340,7 @@ const UserController={
                     });
                     if(DBerror)     throw {message:DBerror , statusCode:200};
     
-                    res.status(200).json({message:insertRes});
+                    res.status(200).json(insertRes);
                 }
                 else    throw {message:error.message , statusCode:200};
             }
@@ -425,7 +425,7 @@ const UserController={
                     });
                     if(DBerror)     throw {message:DBerror , statusCode:200};
     
-                    res.status(200).json({message:insertRes});
+                    res.status(200).json(insertRes);
                 }
                 else    throw {message:error.message , statusCode:200};
             }
@@ -508,7 +508,7 @@ const UserController={
                     });
                     if(DBerror)     throw {message:DBerror , statusCode:200};
     
-                    res.status(200).json({message:insertRes});
+                    res.status(200).json(insertRes);
                 }
                 else    throw {message:error.message , statusCode:200};
             }
@@ -580,7 +580,7 @@ const UserController={
                     const {DBdata:insertRes,DBerror}=await Contains.addNewSongInAPlaylist(requestData);
                     if(DBerror)     throw {message:DBerror , statusCode:200};
     
-                    res.status(200).json({message:insertRes});
+                    res.status(200).json(insertRes);
                 }
                 else    throw {message:error.message , statusCode:200};
             }

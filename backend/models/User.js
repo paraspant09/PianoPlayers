@@ -5,10 +5,10 @@ const {CountryCodeRegEx,CountryCodeRegExErrorMessage}=require('../constants/Coun
 const User={
     schema: {
         fname:Joi.string().alphanum().min(3).max(100).required(),
-        lname:Joi.string().alphanum().min(3).max(100).default(null),
+        lname:Joi.string().alphanum().min(3).max(100).allow(null),
         email:Joi.string().max(50).email().required(),
         password:Joi.string().min(8).max(255).required(),
-        bio:Joi.string().trim().min(10).max(230).default(null),
+        bio:Joi.string().trim().min(10).max(230).allow(null),
         country_code:Joi.string().min(3).max(3).pattern(new RegExp(CountryCodeRegEx)).required().messages(CountryCodeRegExErrorMessage),
         gender:Joi.string().valid('M','F','O').required()
     },
@@ -60,7 +60,7 @@ const User={
         try {
             const queryString="INSERT INTO `piano`.`user` (`fname`,`lname`, `email`, `password`, `bio`, `country_code`, `gender`) VALUES (?, ?, ?, ?, ?, ?, ?);";
             const [rows] = await db.query(queryString,[fname,lname,email,password,bio,country_code,gender]);
-            return { DBdata:rows };
+            return { DBdata: rows };
         } catch (error) {
             console.error(error.sqlMessage);
             return { DBerror:"Database Error Occured." };
@@ -70,7 +70,7 @@ const User={
         try {
             const queryString="UPDATE `piano`.`user` SET `fname` = ?, `lname` = ?, `email` = ?, `password` = ?, `bio` = ?, `country_code` = ?, `gender` = ? WHERE (`user_id` = ?);"
             const [rows] = await db.query(queryString,[fname,lname,email,password,bio,country_code,gender,user_id]);
-            return { DBdata:rows };
+            return { DBdata: { message:rows.affectedRows>0 ? "Update Successful." : "Update Unsuccessful."} };
         } catch (error) {
             console.error(error.sqlMessage);
             return { DBerror: "Database Error Occured." };
@@ -80,7 +80,7 @@ const User={
         try {
             const queryString="DELETE FROM `piano`.`user` WHERE `user_id` = ?;";
             const [rows] = await db.query(queryString,[id]);
-            return { DBdata:rows };
+            return { DBdata: { message:rows.affectedRows>0 ? "Deletion Successful." : "Deletion Unsuccessful."} };
         } catch (error) {
             console.error(error.sqlMessage);
             return { DBerror: "Database Error Occured." };

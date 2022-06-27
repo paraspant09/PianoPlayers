@@ -7,7 +7,7 @@ const AddToLibrary={
     },
     async getAllPlaylistsAddedByAUser(user_id){
         try {
-            const [rows] = await db.query("SELECT al.`playlist_id`,`popularity` FROM `piano`.`add_to_library` as al join `piano`.`playlist` as p ON al.`playlist_id`=p.`playlist_id` WHERE (al.`user_id` = ?) ORDER BY `popularity` DESC;",[user_id]);
+            const [rows] = await db.query("SELECT al.`playlist_id`,`playlist_name`,p.`user_id`,`creation_date`,`details`,`tag`,`popularity` FROM `piano`.`add_to_library` as al join `piano`.`playlist` as p ON al.`playlist_id`=p.`playlist_id` WHERE (al.`user_id` = ?) ORDER BY `popularity` DESC;",[user_id]);
             return { DBdata:rows };
         } catch (error) {
             console.error(error.sqlMessage);
@@ -39,7 +39,7 @@ const AddToLibrary={
 
             const updatePopularity="UPDATE `piano`.`playlist` SET `popularity` = `popularity`+ 1 WHERE (`playlist_id` = ?);";
             const [_] = await db.query(updatePopularity,[playlist_id]);
-            return { DBdata:rows };
+            return { DBdata:{ message:rows.affectedRows>0 ? "Liked Successfully." : "Like Unsuccessful."} };
         } catch (error) {
             console.error(error.sqlMessage);
             return { DBerror:"Database Error Occured." };
@@ -52,7 +52,7 @@ const AddToLibrary={
 
             const updatePopularity="UPDATE `piano`.`playlist` SET `popularity` = `popularity`- 1 WHERE (`playlist_id` = ?);";
             const [_] = await db.query(updatePopularity,[playlist_id]);
-            return { DBdata:rows };
+            return { DBdata:{ message:rows.affectedRows>0 ? "Removed Like Successfully." : "Like Removal Unsuccessful."} };
         } catch (error) {
             console.error(error.sqlMessage);
             return { DBerror: "Database Error Occured." };

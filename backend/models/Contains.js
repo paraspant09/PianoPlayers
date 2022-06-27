@@ -37,7 +37,7 @@ const Contains={
         try {
             const queryString="INSERT INTO `piano`.`contains` (`song_id`,`playlist_id`) VALUES (?, ?);";
             const [rows] = await db.query(queryString,[song_id,playlist_id]);
-            return { DBdata:rows };
+            return { DBdata: { message:rows.affectedRows>0 ? "Song added in playlist." : "Song cannot added in playlist."} };
         } catch (error) {
             console.error(error.sqlMessage);
             return { DBerror:"Database Error Occured." };
@@ -47,7 +47,7 @@ const Contains={
         try {
             const queryString="DELETE FROM `piano`.`contains` WHERE `song_id` = ? and `playlist_id` = ?;";
             const [rows] = await db.query(queryString,[song_id,playlist_id]);
-            return { DBdata:rows };
+            return { DBdata: { message:rows.affectedRows>0 ? "Song removed from playlist." : "Song cannot removed from playlist."} };
         } catch (error) {
             console.error(error.sqlMessage);
             return { DBerror: "Database Error Occured." };

@@ -62,7 +62,7 @@ const Song={
         try {
             const queryString="INSERT INTO `piano`.`song` (`song_name`, `user_id`, `status`, `song`) VALUES (?, ?, ?, ?);";
             const [rows] = await db.query(queryString,[song_name,user_id,status,song]);
-            return { DBdata:rows };
+            return { DBdata: { message:rows.affectedRows>0 ? "Song added Successful." : "Song not added."} };
         } catch (error) {
             console.error(error.sqlMessage);
             return { DBerror:"Database Error Occured." };
@@ -72,7 +72,7 @@ const Song={
         try {
             const queryString="UPDATE `piano`.`song` SET `song_name` = ?, `status` = ?, `song` = ? WHERE (`song_id` = ?);"
             const [rows] = await db.query(queryString,[song_name,status,song,song_id]);
-            return { DBdata:rows };
+            return { DBdata:{ message:rows.affectedRows>0 ? "Updation Successful." : "Updation Unsuccessful."} };
         } catch (error) {
             console.error(error.sqlMessage);
             return { DBerror: "Database Error Occured." };
@@ -82,7 +82,7 @@ const Song={
         try {
             const queryString="DELETE FROM `piano`.`song` WHERE (`song_id` = ?);";
             const [rows] = await db.query(queryString,[song_id]);
-            return { DBdata:rows };
+            return { DBdata: { message:rows.affectedRows>0 ? "Deletion Successful." : "Deletion Unsuccessful."} };
         } catch (error) {
             console.error(error.sqlMessage);
             return { DBerror: "Database Error Occured." };
